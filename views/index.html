@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<head>
+    <title>Javascript Quiz</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,600;8..144,700&display=swap" rel="stylesheet">
+
+    <style>
+
+        body {  
+            text-align: left;
+            font-family: 'Roboto Flex', sans-serif;
+            padding: 2% 7%;
+        }
+
+        h1 {
+            margin-top: 5%;
+            font-size: 30px;
+            letter-spacing: 2px;
+        }
+
+        .event-block {
+            float: left;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        input {  margin-right: 10px;  }
+
+        .warning {  color: red !important;  }
+        
+        .btn {
+            font-size: 13px;
+            background: #277BC0;
+            padding: 8px 30px;
+            border: solid 1px #277BC0;
+            color: #ffffff;
+            border-radius: 5px;
+            font-weight: 700;
+        }
+
+        .quiz-block {
+            float: left;
+            width: 100%;
+            display: none;
+            padding: 10px 0;
+        }
+
+        .button_groups {
+            float: left;
+            width: 100%;
+            display: block;
+            padding: 32px 5px;
+        }
+
+        .disabled { 
+            background: #696969;
+            cursor: not-allowed;
+         }
+
+        .btn-1 {  margin-right: 30px;  }
+
+        .timer_demo {
+            font-size: 40px;
+            font-weight: bolder;
+            letter-spacing: 5px;
+            margin-bottom: 33px;
+            color: #277BC0;
+            text-align: center;
+            font-weight: 700;
+        }
+
+    </style>
+</head>
+
+<body>
+    <h1>Javascript Quiz</h1>
+    <div id="quiz-section" class="quiz-block">
+        <h4>Question <span id="question_no"></span> of 5</h4>
+        <p id="question"></p><br><br>
+        <input type="radio" id="opt1" onclick="validateAnswer(event)" name="option" value=""/><label id="option1"></label><br><br>
+        <input type="radio" id="opt2" onclick="validateAnswer(event)" name="option" value=""/><label id="option2"></label><br><br>
+        <input type="radio" id="opt3" onclick="validateAnswer(event)" name="option" value=""/><label id="option3"></label>
+    </div>
+    <div class="button_groups">
+        <button class="btn btn-1" onclick="Next();" type="button">Next</button>
+        <button id="final_submit" class="btn btn-2 disabled" disabled onclick="submitExam();" type="button">Submit</button>
+    </div>
+
+    <script>
+
+        localStorage.setItem("flag",0);
+        localStorage.setItem("score",0);
+
+        var inc = null;
+        var score = null;
+
+        var quizQuestions = JSON.parse(localStorage.getItem("questionGroup"));
+
+        // const questions = [
+        //     {
+        //         id: 1,
+        //         quetion: "How do you call a function named 'myFunction'?",
+        //         option1: "myFunction()",
+        //         option2: "call myFunction()",
+        //         option3: "call function myFunction()",
+        //         answer: "myFunction()",
+        //     },
+        //     {
+        //         id: 2,
+        //         quetion:
+        //         "Where is the correct place to insert a JavaScript?",
+        //         option1: "The body section",
+        //         option2: "The head section",
+        //         option3: "Both body and head section",
+        //         answer: "The body section",
+        //     },
+        //     {
+        //         id: 3,
+        //         quetion: "How to write an IF statement in JavaScript?",
+        //         option1: "if(i == 5)",
+        //         option2: "if i = 5",
+        //         option3: "if i = 5 then",
+        //         answer: "if(i == 5)",
+        //     },
+        //     {
+        //         id: 4,
+        //         quetion: "How do you write 'Hello World' in an alert box?",
+        //         option1: "alertBox('Hello World')",
+        //         option2: "msg('Hello World')",
+        //         option3: "alert('Hello World')",
+        //         answer: "alertBox('Hello World')",
+        //     },
+        //     {
+        //         id: 5,
+        //         quetion: "How do you create a function in JavaScript?",
+        //         option1: "function myFunction()",
+        //         option2: "function:myFunction()",
+        //         option3: "function = myFunction()",
+        //         answer: "function myFunction()",
+        //     },
+        // ];
+
+        function validateAnswer(event) {
+            question_id = localStorage.getItem("flag");
+
+            questions.forEach((question) => {
+                if(question.id == localStorage.getItem("flag") ) {
+                    if (event.target.value == question.answer) {
+                        score += 2;
+                    } else {
+                        score -= 2;
+                    }
+                    
+                }
+            });
+        }
+
+       
+
+        Next();
+
+        function Next() {
+
+            document.getElementById("quiz-section").style.display = "block";
+
+            inc = parseInt(localStorage.getItem("flag")) + 1;
+            localStorage.setItem("flag",inc);
+
+            quizQuestions.forEach((question) => {
+                if(inc == question.id) {
+                    document.getElementById("question_no").innerHTML = question.id.toString();
+                    document.getElementById("question").innerHTML = question.question.toString();
+                    document.getElementById("opt1").value = question.opt1;
+                    document.getElementById("opt2").value = question.opt2;
+                    document.getElementById("opt3").value = question.opt3;
+                    document.getElementById("option1").innerHTML = question.opt1.toString();
+                    document.getElementById("option2").innerHTML = question.opt2.toString();
+                    document.getElementById("option3").innerHTML = question.opt3.toString();
+                } else if(inc >= quizQuestions.length) {
+                    document.getElementById('final_submit').disabled = false;
+                    document.getElementById('final_submit').classList.remove("disabled");
+                }
+            });
+        }
+   
+
+    </script>
+</body>
+</html>
