@@ -59,7 +59,24 @@
         .disabled { 
             background: #696969;
             cursor: not-allowed;
-         }
+        }
+
+        .result_message {
+            float: left;
+            width: 100%;
+            display: none;
+            text-align: center;
+            padding-top: 11%;
+        }
+
+        .result_message>h4 {
+            font-size: 28px;
+        }
+        .result_message>img {
+            height: 100%;
+            width: auto;
+            margin-right: 30px;
+        }
 
         .btn-1 {  margin-right: 30px;  }
 
@@ -77,89 +94,73 @@
 </head>
 
 <body>
-    <h1>Javascript Quiz</h1>
     <div id="quiz-section" class="quiz-block">
-        <h4>Question <span id="question_no"></span> of 5</h4>
+        <h1>Javascript Quiz</h1>
+        <h4>Question <span id="question_no"></span> of <span id="total_question"></span></h4>
         <p id="question"></p><br><br>
         <input type="radio" id="opt1" onclick="validateAnswer(event)" name="option" value=""/><label id="option1"></label><br><br>
         <input type="radio" id="opt2" onclick="validateAnswer(event)" name="option" value=""/><label id="option2"></label><br><br>
         <input type="radio" id="opt3" onclick="validateAnswer(event)" name="option" value=""/><label id="option3"></label>
     </div>
-    <div class="button_groups">
-        <button class="btn btn-1" onclick="Next();" type="button">Next</button>
+    <div id="buttons-section" class="button_groups">
+        <button class="btn btn-1" id="next_button" onclick="Next();" type="button">Next</button>
         <button id="final_submit" class="btn btn-2 disabled" disabled onclick="submitExam();" type="button">Submit</button>
+    </div>
+    <div id="result" class="result_message">
+        <img id="result_icon" src="check.png" alt="result">
+        <h4>Hey!! You score is <span id="score_value"></span></h4>
+        <button class="btn btn-1" onclick="location.reload()" type="button">Take again</button>
     </div>
 
     <script>
 
         localStorage.setItem("flag",0);
-        localStorage.setItem("score",0);
 
         var inc = null;
-        var score = null;
+        let score = 0;
+        let inp = 0;
 
         var quizQuestions = JSON.parse(localStorage.getItem("questionGroup"));
 
-        // const questions = [
-        //     {
-        //         id: 1,
-        //         quetion: "How do you call a function named 'myFunction'?",
-        //         option1: "myFunction()",
-        //         option2: "call myFunction()",
-        //         option3: "call function myFunction()",
-        //         answer: "myFunction()",
-        //     },
-        //     {
-        //         id: 2,
-        //         quetion:
-        //         "Where is the correct place to insert a JavaScript?",
-        //         option1: "The body section",
-        //         option2: "The head section",
-        //         option3: "Both body and head section",
-        //         answer: "The body section",
-        //     },
-        //     {
-        //         id: 3,
-        //         quetion: "How to write an IF statement in JavaScript?",
-        //         option1: "if(i == 5)",
-        //         option2: "if i = 5",
-        //         option3: "if i = 5 then",
-        //         answer: "if(i == 5)",
-        //     },
-        //     {
-        //         id: 4,
-        //         quetion: "How do you write 'Hello World' in an alert box?",
-        //         option1: "alertBox('Hello World')",
-        //         option2: "msg('Hello World')",
-        //         option3: "alert('Hello World')",
-        //         answer: "alertBox('Hello World')",
-        //     },
-        //     {
-        //         id: 5,
-        //         quetion: "How do you create a function in JavaScript?",
-        //         option1: "function myFunction()",
-        //         option2: "function:myFunction()",
-        //         option3: "function = myFunction()",
-        //         answer: "function myFunction()",
-        //     },
-        // ];
+        function submitExam() {
+            var inputs = document.getElementsByTagName("INPUT");
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].type === 'radio') {
+                    inputs[i].disabled = true;
+                }
+            }
+            document.getElementById("quiz-section").style.display = "none";
+            document.getElementById("buttons-section").style.display = "none";
+            document.getElementById("result").style.display = "block";
+            if(score === 0) {
+                document.getElementById("result_icon").src = "info.png";
+            } else {
+                document.getElementById("result_icon").src = "check.png";
+            }
+            document.getElementById("score_value").innerHTML = score;
+        }
 
         function validateAnswer(event) {
             question_id = localStorage.getItem("flag");
-
-            questions.forEach((question) => {
-                if(question.id == localStorage.getItem("flag") ) {
-                    if (event.target.value == question.answer) {
-                        score += 2;
+            
+            quizQuestions.forEach((question) => {
+                if(question.id == parseInt(localStorage.getItem("flag")) ) {
+                    if (event.target.value === question.answer) {
+                        if(inp != 1) {
+                            score += 2;
+                            inp += 1; 
+                        }
                     } else {
-                        score -= 2;
+                        if(inp == 1) {
+                            score -= 2;
+                            inp = 0;
+                        }
                     }
-                    
                 }
             });
         }
 
-       
+        document.getElementById("total_question").innerHTML = quizQuestions.length;
 
         Next();
 
@@ -169,8 +170,11 @@
 
             inc = parseInt(localStorage.getItem("flag")) + 1;
             localStorage.setItem("flag",inc);
+            inp = 0;
 
+            
             quizQuestions.forEach((question) => {
+                
                 if(inc == question.id) {
                     document.getElementById("question_no").innerHTML = question.id.toString();
                     document.getElementById("question").innerHTML = question.question.toString();
@@ -180,6 +184,9 @@
                     document.getElementById("option1").innerHTML = question.opt1.toString();
                     document.getElementById("option2").innerHTML = question.opt2.toString();
                     document.getElementById("option3").innerHTML = question.opt3.toString();
+                    if(question.id == quizQuestions.length) {
+                        document.getElementById('next_button').classList.add("disabled");
+                    }
                 } else if(inc >= quizQuestions.length) {
                     document.getElementById('final_submit').disabled = false;
                     document.getElementById('final_submit').classList.remove("disabled");
