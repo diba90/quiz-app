@@ -160,9 +160,14 @@
             });
         }
 
-        document.getElementById("total_question").innerHTML = quizQuestions.length;
 
-        Next();
+        if(quizQuestions === null) {
+            document.getElementById("buttons-section").style.display = "none";
+            alert("Hey!! Quiz not yet started.");
+        } else {
+            document.getElementById("total_question").innerHTML = quizQuestions.length;
+            Next();
+        }
 
         function Next() {
 
@@ -171,7 +176,6 @@
             inc = parseInt(localStorage.getItem("flag")) + 1;
             localStorage.setItem("flag",inc);
             inp = 0;
-
             
             quizQuestions.forEach((question) => {
                 
