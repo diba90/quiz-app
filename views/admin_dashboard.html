@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <head>
+
     <title>Admin Dashboard</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,6 +50,8 @@
             display: none;
             padding: 10px 0;
         }
+        
+        table {  font-size: 14px;  }
 
         .accordion { padding: 0 7%; }
 
@@ -188,7 +191,7 @@
                                 <input type="text" id="edit_answer" class="form-control"/>
                             </div>
                             <div class="col">
-                                <button type="submit" onclick="updateDetails()" class="btn btn-primary">Submit</button>
+                                <button type="submit" onclick="updateQuestion()" class="btn btn-primary">Submit</button>
                             </div>
                         </div>
                     </div>
@@ -214,6 +217,7 @@
             { 'question': "How do you create a function in JavaScript?", 'opt1': "function myFunction()", 'opt2': "function:myFunction()", 'opt3': "function = myFunction()", 'answer': "function myFunction()"},
         ];
 
+        // Assign id dynamically
         questions.forEach((item, index)=>{
             item.id = index+1;
         });
@@ -221,9 +225,12 @@
         function deleteQuestion(qid) {
             const questions = JSON.parse(localStorage.getItem("questionGroup"));
             questions.splice(questions.findIndex(a => a.id === qid) , 1)
+
+            // Assign id dynamically
             questions.forEach((item, index)=>{
                 item.id = index+1;
             });
+
             localStorage.setItem('questionGroup', JSON.stringify(questions));
             location.reload();
         }
@@ -243,7 +250,7 @@
 
         }
 
-        function updateDetails() {
+        function updateQuestion() {
 
             let qid = document.getElementById('edit_question_id').value;
             qid -= 1;
@@ -257,8 +264,6 @@
             questions[qid].opt2 = document.getElementById('edit_option2').value;
             questions[qid].opt3 = document.getElementById('edit_option3').value;
             questions[qid].answer = document.getElementById('edit_answer').value;
-
-            console.log(questions[qid]);
 
             localStorage.setItem('questionGroup', JSON.stringify(questions));
 
@@ -284,6 +289,8 @@
 
             const questionsList = JSON.parse(localStorage.getItem("questionGroup"));
             updatedQuestons = [...questionsList, obj ]
+
+            // Assign id dynamically
             updatedQuestons.forEach((item, index)=>{
                 item.id = index+1;
             });
@@ -317,8 +324,6 @@
         });
 
         localStorage.setItem('questionGroup', JSON.stringify(questionsList));
-
-        var getObject = localStorage.getItem('questionGroup');
 
     </script>
 

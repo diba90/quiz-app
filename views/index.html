@@ -103,7 +103,7 @@
         <input type="radio" id="opt3" onclick="validateAnswer(event)" name="option" value=""/><label id="option3"></label>
     </div>
     <div id="buttons-section" class="button_groups">
-        <button class="btn btn-1" id="next_button" onclick="Next();" type="button">Next</button>
+        <button class="btn btn-1" id="next_button" onclick="NextQuestion();" type="button">Next</button>
         <button id="final_submit" class="btn btn-2 disabled" disabled onclick="submitExam();" type="button">Submit</button>
     </div>
     <div id="result" class="result_message">
@@ -166,12 +166,17 @@
             alert("Hey!! Quiz not yet started.");
         } else {
             document.getElementById("total_question").innerHTML = quizQuestions.length;
-            Next();
+            NextQuestion();
         }
 
-        function Next() {
+        function NextQuestion() {
 
             document.getElementById("quiz-section").style.display = "block";
+
+            var selectElement = document.getElementsByName("option");
+            for(var i=0;i<selectElement.length;i++) {
+                selectElement[i].checked = false;
+            }
 
             inc = parseInt(localStorage.getItem("flag")) + 1;
             localStorage.setItem("flag",inc);
@@ -179,16 +184,16 @@
             
             quizQuestions.forEach((question) => {
                 
-                if(inc == question.id) {
-                    document.getElementById("question_no").innerHTML = question.id.toString();
-                    document.getElementById("question").innerHTML = question.question.toString();
+                if(inc === question.id) {
+                    document.getElementById("question_no").innerHTML = question.id;
+                    document.getElementById("question").innerHTML = question.question;
                     document.getElementById("opt1").value = question.opt1;
                     document.getElementById("opt2").value = question.opt2;
                     document.getElementById("opt3").value = question.opt3;
-                    document.getElementById("option1").innerHTML = question.opt1.toString();
-                    document.getElementById("option2").innerHTML = question.opt2.toString();
-                    document.getElementById("option3").innerHTML = question.opt3.toString();
-                    if(question.id == quizQuestions.length) {
+                    document.getElementById("option1").innerHTML = question.opt1;
+                    document.getElementById("option2").innerHTML = question.opt2;
+                    document.getElementById("option3").innerHTML = question.opt3;
+                    if(question.id === quizQuestions.length) {
                         document.getElementById('next_button').classList.add("disabled");
                     }
                 } else if(inc >= quizQuestions.length) {
