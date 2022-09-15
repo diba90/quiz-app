@@ -89,7 +89,9 @@
           <span class="navbar-brand mb-0 h1">Welcome Admin</span>
         </div>
     </nav>
+    
     <br><br>
+
     <div class="container-xl">
         <div class="row align-items-start">
             <table class="table" id="questions_table">
@@ -110,7 +112,9 @@
             </table>
         </div>
     </div>
+
     <br><br>
+
     <div class="accordion" id="accordionExample">
         <div class="accordion-item">
             <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
@@ -124,23 +128,23 @@
                         <div class="row align-items-end">
                             <div class="col">
                                 <label class="form-label">Question</label>
-                                <input type="text" id="form_question" class="form-control"/>
+                                <input type="text" required id="form_question" class="form-control"/>
                             </div>
                             <div class="col">
                                 <label class="form-label">Option 1</label>
-                                <input type="text" id="form_option1" class="form-control"/>
+                                <input type="text" required id="form_option1" class="form-control"/>
                             </div>
                             <div class="col">
                                 <label class="form-label">Option 2</label>
-                                <input type="text" id="form_option2" class="form-control"/>
+                                <input type="text" required id="form_option2" class="form-control"/>
                             </div>
                             <div class="col">
                                 <label class="form-label">Option 3</label>
-                                <input type="text" id="form_option3" class="form-control"/>
+                                <input type="text" required id="form_option3" class="form-control"/>
                             </div>
                             <div class="col">
                                 <label class="form-label">Answer</label>
-                                <input type="text" id="form_answer" class="form-control"/>
+                                <input type="text" required id="form_answer" class="form-control"/>
                             </div>
                             <div class="col">
                                 <button type="submit" onclick="addQuestion()" class="btn btn-primary">Submit</button>
@@ -172,23 +176,23 @@
                             <div class="col">
                                 <input type="hidden" id="edit_question_id" class="form-control"/>
                                 <label class="form-label">Question</label>
-                                <input type="text" id="edit_question" class="form-control"/>
+                                <input type="text" required id="edit_question" class="form-control"/>
                             </div>
                             <div class="col">
                                 <label class="form-label">Option 1</label>
-                                <input type="text" id="edit_option1" class="form-control"/>
+                                <input type="text" required id="edit_option1" class="form-control"/>
                             </div>
                             <div class="col">
                                 <label class="form-label">Option 2</label>
-                                <input type="text" id="edit_option2" class="form-control"/>
+                                <input type="text" required id="edit_option2" class="form-control"/>
                             </div>
                             <div class="col">
                                 <label class="form-label">Option 3</label>
-                                <input type="text" id="edit_option3" class="form-control"/>
+                                <input type="text" required id="edit_option3" class="form-control"/>
                             </div>
                             <div class="col">
                                 <label class="form-label">Answer</label>
-                                <input type="text" id="edit_answer" class="form-control"/>
+                                <input type="text" required id="edit_answer" class="form-control"/>
                             </div>
                             <div class="col">
                                 <button type="submit" onclick="updateQuestion()" class="btn btn-primary">Submit</button>
@@ -222,17 +226,22 @@
             item.id = index+1;
         });
 
-        function deleteQuestion(qid) {
+        function deleteQuestion(questionId) {
+            
             const questions = JSON.parse(localStorage.getItem("questionGroup"));
-            questions.splice(questions.findIndex(a => a.id === qid) , 1)
+            if(questions.length != 1) {
+                questions.splice(questions.findIndex(question => question.id === questionId) , 1)
+                // Assign id dynamically
+                questions.forEach((item, index)=>{
+                    item.id = index+1;
+                });
 
-            // Assign id dynamically
-            questions.forEach((item, index)=>{
-                item.id = index+1;
-            });
-
-            localStorage.setItem('questionGroup', JSON.stringify(questions));
-            location.reload();
+                localStorage.setItem('questionGroup', JSON.stringify(questions));
+                location.reload();
+            } else {
+                alert("Unable to process your request");
+            }
+            
         }
 
         function showQuestionDetails(qid) {
@@ -279,24 +288,30 @@
             let inputOption3 = document.getElementById('form_option3').value;
             let inputAnswer = document.getElementById('form_answer').value; 
 
-            const obj = { 
-                question: inputQuestion,
-                opt1: inputOption1,
-                opt2: inputOption2,
-                opt3: inputOption3,
-                answer: inputAnswer,
+            if (inputQuestion != "" && inputOption1 != "" && inputOption2 != "" && inputOption3 != "" && inputAnswer != "") {
+
+                const obj = { 
+                    question: inputQuestion,
+                    opt1: inputOption1,
+                    opt2: inputOption2,
+                    opt3: inputOption3,
+                    answer: inputAnswer,
+                }
+
+                const questionsList = JSON.parse(localStorage.getItem("questionGroup"));
+                updatedQuestons = [...questionsList, obj ]
+
+                // Assign id dynamically
+                updatedQuestons.forEach((item, index)=>{
+                    item.id = index+1;
+                });
+                localStorage.setItem('questionGroup', JSON.stringify(updatedQuestons));
+
+                location.reload();
+            
+            } else {
+                alert("Please fill out all fields.")
             }
-
-            const questionsList = JSON.parse(localStorage.getItem("questionGroup"));
-            updatedQuestons = [...questionsList, obj ]
-
-            // Assign id dynamically
-            updatedQuestons.forEach((item, index)=>{
-                item.id = index+1;
-            });
-            localStorage.setItem('questionGroup', JSON.stringify(updatedQuestons));
-
-            location.reload();
             
         }
 
